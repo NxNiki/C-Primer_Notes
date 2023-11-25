@@ -17,11 +17,13 @@ the class author determines all the operations that can be used on objects of th
 
 Most operating systems support ﬁle redirection, which lets us associate a
 named ﬁle with the standard input and the standard output:
+
 `$ addItems <infile >outfile`
-Assuming $ is the system prompt and our addition program has been compiled into
-an executable ﬁle named addItems.exe (or addItems on UNIX systems), this com-
-mand will read transactions from a ﬁle named infile and write its output to a ﬁle
+
+Assuming $ is the system prompt and our addition program has been compiled into an executable ﬁle named addItems.exe (or addItems on UNIX systems), this command will read transactions from a ﬁle named infile and write its output to a ﬁle
 named outfile in the current directory.
+
+
 
 
 
