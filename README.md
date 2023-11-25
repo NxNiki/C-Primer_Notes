@@ -13,5 +13,16 @@ When we enter input to a program from the keyboard, different operating systems 
 
 ## section 1.5.1
 Every class defines a type. The type name is the same as the name of the class.
+the class author determines all the operations that can be used on objects of the class type.
+
+Most operating systems support ﬁle redirection, which lets us associate a
+named ﬁle with the standard input and the standard output:
+`$ addItems <infile >outfile`
+Assuming $ is the system prompt and our addition program has been compiled into
+an executable ﬁle named addItems.exe (or addItems on UNIX systems), this com-
+mand will read transactions from a ﬁle named infile and write its output to a ﬁle
+named outfile in the current directory.
+
+
 
 
