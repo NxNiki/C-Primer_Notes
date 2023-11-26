@@ -88,21 +88,21 @@ Character and Character String Literals:
 
 The type of a string literal is an array of constant chars. The compiler appends a null character (’\0’) to every string literal. Thus, the actual size of a string literal is one more than its apparent size.
 
-```
-\n newline
-\v vertical tab
-\\ backslash
-\r carriage return
+```C++
+\n // newline
+\v // vertical tab
+\\ // backslash
+\r // carriage return
 
 
-\t horizontal tab
-\b backspace
-\? question mark
-\f formfeed
+\t // horizontal tab
+\b // backspace
+\? // question mark
+\f // formfeed
 
-\a alert (bell)
-\" double quote
-\' single quote
+\a // alert (bell)
+\" // double quote
+\' // single quote
 ```
 
 Specifying the Type of a Literal: 
@@ -196,7 +196,7 @@ int i3 = 1024, &ri = i3; // i3 is an int ; ri is a reference bound to i3
 int &r3 = i3, &r4 = i2;  // both r3 and r4 are references
 ```
 
-```
+```C++
 int &refVal4 = 10; // error: initializer must be an object
 double dval = 3.14;
 int &refVal5 = dval; // error: initializer must be an int object
