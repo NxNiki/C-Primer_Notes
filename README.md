@@ -105,6 +105,40 @@ The type of a string literal is an array of constant chars. The compiler appends
 \' single quote
 ```
 
+Specifying the Type of a Literal: 
+```
+L’a’ // wide character literal, type is wchar_t
+u8"hi!" // utf-8 string literal (utf-8 encodes a Unicode character in 8 bits)
+42ULL // unsigned integer literal, type is unsigned long long
+1E-3F // single-precision floating-point literal, type is float
+3.14159L // extended-precision floating-point literal, type is long double
+```
+
+## 2.2 Variables
+
+### Variable Definitions
+```C++
+// ok: price is defined and initialized before it is used to initialize discount
+double price = 109.99, discount = price * 0.16;
+// ok: call applyDiscount and use the return value to initialize salePrice
+double salePrice = applyDiscount(price, discount);
+```
+initialization and assignment are different operations in C++.
+
+List Initialization:
+```{C++}
+int units_sold = 0;
+int units_sold = {0};
+int units_sold{0};
+int units_sold(0);
+```
+
+
+
+
+
+
+
 
 
 
