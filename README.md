@@ -49,6 +49,61 @@ std::cout << i + i << std::endl; // prints -84
 std::cout << u + i << std::endl; // if 32-bit ints, prints 4294967264
 ```
 
+Converting a negative number to unsigned behaves exactly as if we had attempted to assign that negative value to an unsigned object.
+The value “wraps around” as described above.
+
+```C++
+unsigned u1 = 42, u2 = 10;
+std::cout << u1 - u2 << std::endl; // ok: result is 32
+std::cout << u2 - u1 << std::endl; // ok: but the result will wrap around
+```
+
+Expressions that mix signed and unsigned values can yield surprising results when the signed value is negative. It is essential to remember that signed values are automatically converted to unsigned.
+
+```C++
+unsigned a = 1;
+int b = -1;
+std::cout << a * b << std::endl; // ok: but the result will wrap around
+```
+
+### section 2.1.3 Literal
+
+A value, such as 42, is known as a literal because its value is self-evident. Every literal has a type. The form and value of a literal determine its type.
+
+```C++
+20 /* decimal */
+024 /* octal */
+0x14 /* hexadecimal */
+```
+
+By default, decimal literals are signed.
+Octal and hexadecimal literals can be either signed or unsigned types.
+
+Character and Character String Literals:
+
+```C++
+’a’ // character literal
+"Hello World!" // string literal
+```
+
+The type of a string literal is an array of constant chars. The compiler appends a null character (’\0’) to every string literal. Thus, the actual size of a string literal is one more than its apparent size.
+
+```
+\n newline
+\v vertical tab
+\\ backslash
+\r carriage return
+
+
+\t horizontal tab
+\b backspace
+\? question mark
+\f formfeed
+
+\a alert (bell)
+\" double quote
+\' single quote
+```
 
 
 
