@@ -126,16 +126,81 @@ double salePrice = applyDiscount(price, discount);
 initialization and assignment are different operations in C++.
 
 List Initialization:
-```{C++}
+```C++
 int units_sold = 0;
 int units_sold = {0};
 int units_sold{0};
 int units_sold(0);
 ```
 
+The compiler will not let us list initialize variables of built-in
+type if the initializer might lead to the loss of information
+```C++
+long double ld = 3.1415926536;
+int a{ld}, b = {ld}; // error: narrowing conversion required
+int c(ld), d = ld; // ok: but value will be truncated
+```
+
+Default Initialization:
+
+Variables defined outside any function body are initialized to zero.
+
+variables of built-in type defined inside a function are uninitialized. 
+The value of an uninitialized variable of built-in type is undefined.
+It is an error to copy or otherwise try to access the value of a variable whose value is undefined.
 
 
+### section 2.2.2 Variable Declarations and Definitions
+A declaration makes a name known to the program. A file that wants
+to use a name defined elsewhere includes a declaration for that name. A definition
+creates the associated entity.
 
+```
+extern int i; // declares but does not define i
+int j; // declares and defines j
+
+// Any declaration that includes an explicit initializer is a definition. 
+extern double pi = 3.1416; // definition, doing so overrides the extern
+```
+Variables must be defined exactly once but can be declared many times.
+
+
+## Section 2.3 Compound Types:
+### section 2.3.1 references:
+A reference defines an alternative name for an object.
+
+```C++
+int ival = 1024;
+int &refVal = ival; // refVal refers to (is another name for) ival
+int &refVal2; // error: a reference must be initialized
+```
+
+When we define a reference, instead of copying the initializer’s value, we bind the reference to its initializer. Once initialized, a reference
+remains bound to its initial object. There is no way to rebind a reference to refer to a different object.
+
+```C++
+refVal = 2; // assigns 2 to the object to which refVal refers, i.e., to ival
+int ii = refVal; // same as ii = ival
+
+// ok: refVal3 is bound to the object to which refVal is bound, i.e., to ival
+int &refVal3 = refVal;
+// initializes i from the value in the object to which refVal is bound
+int i = refVal; // ok: initializes i to the same value as ival
+```
+
+Reference definition:
+```C++
+int i = 1024, i2 = 2048; // i and i2 are both int s
+int &r = i, r2 = i2; // r is a reference bound to i ; r2 is an int
+int i3 = 1024, &ri = i3; // i3 is an int ; ri is a reference bound to i3
+int &r3 = i3, &r4 = i2;  // both r3 and r4 are references
+```
+
+```
+int &refVal4 = 10; // error: initializer must be an object
+double dval = 3.14;
+int &refVal5 = dval; // error: initializer must be an int object
+```
 
 
 
