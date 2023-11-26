@@ -166,7 +166,7 @@ Variables must be defined exactly once but can be declared many times.
 
 
 ## Section 2.3 Compound Types:
-### section 2.3.1 references:
+### section 2.3.1 References:
 A reference defines an alternative name for an object.
 
 ```C++
@@ -201,6 +201,206 @@ int &refVal4 = 10; // error: initializer must be an object
 double dval = 3.14;
 int &refVal5 = dval; // error: initializer must be an int object
 ```
+
+### section 2.3.2 Pointers
+
+```C++
+int *ip1, *ip2; // both ip1 and ip2 are pointers to int
+double dp, *dp2; // dp2 is a pointer to double ; dp is a double
+```
+
+Taking the Address of an Object:
+
+```C++
+int ival = 42;
+int *p = &ival; // p holds the address of ival ; p is a pointer to ival
+```
+Because references are not objects, they don’t have
+addresses. Hence, we may not define a pointer to a reference.
+With some exceptions, the types of the pointer and the object to which it points must match:
+
+```C++
+double dval;
+double *pd = &dval; // ok: initializer is the address of a double
+double *pd2 = pd;
+// ok: initializer is a pointer to double
+int *pi = pd; // error: types of pi and pd differ
+pi = &dval;
+// error: assigning the address of a double to a pointer to int
+```
+
+dereference operator accesses the object through the pointer:
+
+```
+int ival = 42;
+int *p = &ival; // p holds the address of ival ; p is a pointer to ival
+cout << *p; // * yields the object to which p points; prints 42
+
+*p = 0;  // * yields the object; we assign a new value to ival through p
+cout << *p; // prints 0
+```
+
+`&` and `*` , are used as both an operator in an expression and as part of a declaration. The context in which a symbol is used determines what the symbol means:
+In declarations, & and * are used to form compound types. In expressions, these same symbols are used to denote an operator. It can be helpful to ignore appearances and think of them as if they were different symbols.
+
+```C++
+int i = 42;
+int &r = i; // & follows a type and is part of a declaration; r is a reference
+int *p; // * follows a type and is part of a declaration; p is a pointer
+p = &i; // & is used in an expression as the address-of operator
+*p = i; // * is used in an expression as the dereference operator
+int &r2 = *p; // & is part of the declaration; * is the dereference operator
+```
+
+Null Pointers:
+
+```C++
+int *p1 = nullptr; // equivalent to int *p1 = 0;
+int *p2 = 0; // directly initializes p2 from the literal constant 0
+// must #include cstdlib
+int *p3 = NULL; // equivalent to int *p3 = 0;
+
+int zero = 0;
+pi = zero;
+// error: cannot assign an int to a pointer
+```
+
+As with any other uninitialized variable, what happens when we use an uninitialized pointer is undefined. Using an uninitialized pointer almost always results in a
+run-time crash. However, debugging the resulting crashes can be surprisingly hard.
+Under most compilers, when we use an uninitialized pointer, the bits in the memory in which the pointer resides are used as an address.
+
+It can be hard to keep straight whether an assignment changes the pointer or
+the object to which the pointer points.
+
+```C++
+pi = &ival; // value in pi is changed; pi now points to ival 
+*pi = 0; // value in ival is changed; pi is unchanged
+```
+
+void * pointers:
+
+The type void* is a special pointer type that can hold the address of any object.
+
+```C++
+double obj = 3.14, *pd = &obj;
+// ok: void* can hold the address value of any data pointer type
+void *pv = &obj; // obj can be an object of any type
+pv = pd; // pv can hold a pointer to any type
+```
+
+a variable definition consists of a base type and a list of declarators.
+Each declarator can relate its variable to the base type differently from the other
+declarators in the same definition.
+
+```C++
+// i is an int ; p is a pointer to int ; r is a reference to int
+int i = 1024, *p = &i, &r = i;
+
+int* p1, p2; // p1 is a pointer to int ; p2 is an int
+int *p1, *p2; // both p1 and p2 are pointers to int
+```
+
+Pointers to Pointers:
+
+A pointer is an object in memory, so like any object, it has an address. Therefore, we can store
+the address of a pointer in another pointer.
+
+```C++
+int ival = 1024;
+int *pi = &ival;  // pi points to an int
+int **ppi = &pi;  // ppi points to a pointer to an int
+
+cout << "The value of ival\n"
+<< "direct value: " << ival << "\n"
+<< "indirect value: " << *pi << "\n"
+<< "doubly indirect value: " << **ppi
+<< endl;
+```
+
+References to Pointers:
+
+```C++
+int i = 42;
+int *p;
+// p is a pointer to int
+int *&r = p; // r is a reference to the pointer p
+r = &i; // r refers to a pointer; assigning &i to r makes p point to i
+*r = 0; // dereferencing r yields i, the object to which p points; changes i to 0
+```
+The easiest way to understand the type of r is to read the definition right to left.
+The symbol closest to the name of the variable (& in &r) is the one that has the most immediate effect on the variable’s type. Thus, we know that r is a reference. 
+The next symbol, * in this case, says that the type r refers to is a pointer type. 
+Finally, the base type of the declaration says that r is a reference to a pointer to an int.
+
+
+## const Qualifier
+
+const variables are defined as local to the file. When we define a const with the same
+name in multiple files, it is as if we had written definitions for separate variables
+in each file.
+
+Because we can’t change the value of a const object after we create it, it must be
+initialized.
+
+```C++
+const int bufSize = 512; // input buffer size
+
+const int i = get_size(); // ok: initialized at run time
+const int j = 42; // ok: initialized at compile time
+const int k; // error: k is uninitialized const
+```
+
+To define a single instance of a const variable, we use the keyword extern
+on both its definition and declaration(s):
+
+```C++
+// file_1.cc defines and initializes a const that is accessible to other files
+extern const int bufSize = fcn();
+// file_1.h
+extern const int bufSize; // same bufSize as defined in file_1.cc
+```
+
+References to const:
+
+```
+const int ci = 1024;
+const int &r1 = ci;  // ok: both reference and underlying object are const
+r1 = 42;  // error: r1 is a reference to const
+int &r2 = ci;  // error: non const reference to a const object
+```
+
+we can initialize a reference to const from any expression that can be
+converted to the reference type.
+
+```C++
+int i = 42;
+const int &r1 = i;  // we can bind a const int& to a plain int object
+const int &r2 = 42; // ok: r2 is a reference to const
+const int &r3 = r1 * 2; // ok: r3 is a reference to const
+int &r4 = r1 * 2; // error: r4 is a plain, non const reference
+
+
+double dval = 3.14;
+const int &ri = dval;
+
+// The above can be considered as:
+const int temp = dval; // create a temporary const int from the double
+const int &ri = temp;  // bind ri to that temporary
+```
+
+Pointers and const:
+
+```C++
+const double pi = 3.14; // pi is const ; its value may not be changed
+double *ptr = &pi; // error: ptr is a plain pointer
+const double *cptr = &pi; // ok: cptr may point to a double that is const
+*cptr = 42; // error: cannot assign to *cptr
+```
+
+
+
+
+
 
 
 
