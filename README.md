@@ -397,6 +397,21 @@ const double *cptr = &pi; // ok: cptr may point to a double that is const
 *cptr = 42; // error: cannot assign to *cptr
 ```
 
+const Pointers:
+
+The fact that a pointer is itself const says nothing about whether we can use
+the pointer to change the underlying object.
+
+```C++
+int errNum = 0;
+int *const curErr = &errNum;  // curErr will always point to errNumb
+
+const double pi = 3.14;
+const double *const pip = &pi;  // pip is a const pointer to a const object
+```
+
+
+
 
 
 
