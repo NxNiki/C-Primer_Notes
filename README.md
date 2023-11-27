@@ -410,6 +410,103 @@ const double pi = 3.14;
 const double *const pip = &pi;  // pip is a const pointer to a const object
 ```
 
+Top-level const:
+
+```C++
+int i = 0;
+int *const p1 = &i; // we can’t change the value of p1 ; const is top-level
+const int ci = 42; // we cannot change ci ; const is top-level
+const int *p2 = &ci; // we can change p2 ; const is low-level
+const int *const p3 = p2; // right-most const is top-level, left-most is not
+const int &r = ci; // const in reference types is always low-level
+```
+When we copy an object, top-level const is ignored.
+Low-level const is never ignored.
+
+### section 2.4.4 constexpr and Constant Expressions
+
+A constant expression is an expression whose value cannot change and that can
+be evaluated at compile time. 
+
+```C++
+const int max_files = 20; // max_files is a constant expression
+const int limit = max_files + 1; // limit is a constant expression
+int staff_size = 27; // staff_size is not a constant expression
+const int sz = get_size(); // sz is not a constant expression
+```
+
+Under the new standard, we can ask the compiler to verify that a variable is a
+constant expression by declaring the variable in a constexpr declaration.
+
+```C++
+constexpr int mf = 20;  // 20 is a constant expression
+constexpr int limit = mf + 1;  // mf + 1 is a constant expression
+constexpr int sz = size();  // ok only if size is a constexpr function
+```
+
+The types we can use in a constexpr are known as “literal types” because they are simple enough to have literal values.
+the arithmetic, reference, and pointer types are literal types.
+
+when we define a pointer in a constexpr declaration, the constexpr specifier applies to the pointer, not the type to which the pointer points:
+
+```C++
+const int *p = nullptr;  // p is a pointer to a const int
+constexpr int *q = nullptr;  // q is a const pointer to int
+```
+
+
+### 2.5.1 Type Aliases
+
+```C++
+typedef double wages; // wages is a synonym for double
+typedef wages base, *p; // base is a synonym for double , p for double*
+```
+
+alias declaration:
+
+```C++
+using SI = Sales_item;  // SI is a synonym for Sales_item
+```
+
+the following declarations use the type `pstring`, which is an alias for the type `char*`
+```C++
+typedef char *pstring;
+const pstring cstr = 0; // cstr is a constant pointer to char
+const pstring *ps; // ps is a pointer to a constant pointer to char
+```
+
+When we rewrite the declaration using `char*`, the base type is `char` and the `*` is part of the declarator. In this case,
+`const char` is the base type.
+
+```C++
+const char *cstr = 0;  // wrong interpretation of const pstring cstr, this is a pointer to const char.
+```
+
+### 2.5.2 The auto type specifier
+
+`auto` ignores top-level `const` and keeps low-level `const`:
+```C++
+const int ci = i, &cr = ci;
+auto b = ci; // b is an int (top-level const in ci is dropped)
+auto c = cr; // c is an int ( cr is an alias for ci whose const is top-level)
+auto d = &i; // d is an int* ( & of an int object is int* )
+auto e = &ci; // e is const int* ( & of a const object is low-level const )
+
+const auto f = ci;  // deduced type of ci is int ; f has type const int
+
+auto &g = ci;  // g is a const int& that is bound to ci
+auto &h = 42;  // error: we can’t bind a plain reference to a literal
+const auto &j = 42; // ok: we can bind a const reference to a literal
+
+auto k = ci, &l = i; // k is int ; l is int&
+auto &m = ci, *p = &ci; // m is a const int& ; p is a pointer to const int
+// error: type deduced from i is int ; type deduced from &ci is const int
+auto &n = i, *p2 = &ci;
+```
+
+
+
+
 
 
 
