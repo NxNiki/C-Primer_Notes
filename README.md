@@ -339,8 +339,7 @@ const variables are defined as local to the file. When we define a const with th
 name in multiple files, it is as if we had written definitions for separate variables
 in each file.
 
-Because we can’t change the value of a const object after we create it, it must be
-initialized.
+A const object after must be initialized in its definition.
 
 ```C++
 const int bufSize = 512; // input buffer size
@@ -459,7 +458,7 @@ constexpr int *q = nullptr;  // q is a const pointer to int
 
 ```C++
 typedef double wages; // wages is a synonym for double
-typedef wages base, *p; // base is a synonym for double , p for double*
+typedef wages base, *p; // base is a synonym for double, p for double*
 ```
 
 alias declaration:
@@ -482,7 +481,7 @@ When we rewrite the declaration using `char*`, the base type is `char` and the `
 const char *cstr = 0;  // wrong interpretation of const pstring cstr, this is a pointer to const char.
 ```
 
-### 2.5.2 The auto type specifier
+### 2.5.2 The `auto` type specifier
 
 `auto` ignores top-level `const` and keeps low-level `const`:
 ```C++
@@ -502,6 +501,34 @@ auto k = ci, &l = i; // k is int ; l is int&
 auto &m = ci, *p = &ci; // m is a const int& ; p is a pointer to const int
 // error: type deduced from i is int ; type deduced from &ci is const int
 auto &n = i, *p2 = &ci;
+```
+
+### 2.5.3 The `decltype` Type specifier
+
+The compiler gives `sum` the same type as the type that would be returned if we were to call `f`.
+
+```C++
+decltype(f()) sum = x;  // sum has whatever type f returns
+
+const int ci = 0, &cj = ci;
+decltype(ci) x = 0; // x has type const int
+decltype(cj) y = x; // y has type const int& and is bound to x
+decltype(cj) z;  // error: z is a reference and must be initialized
+
+
+// decltype of an expression can be a reference type
+int i = 42, *p = &i, &r = i;
+decltype(r + 0) b; // ok: addition yields an int ; b is an (uninitialized) int
+decltype(*p) c;  // error: c is int& and must be initialized (---why? isn't *p is int?)
+```
+
+when we dereference a pointer, we get the object to which the pointer points. Moreover, we can assign to
+that object. Thus, the type deduced by decltype(*p) is int&, not plain int.
+
+```C++
+// decltype of a parenthesized variable is always a reference
+decltype((i)) d;  // error: d is int& and must be initialized
+decltype(i) e;  // ok: e is an (uninitialized) int
 ```
 
 
