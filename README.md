@@ -52,6 +52,9 @@ std::cout << u + i << std::endl; // if 32-bit ints, prints 4294967264
 Converting a negative number to unsigned behaves exactly as if we had attempted to assign that negative value to an unsigned object.
 The value “wraps around” as described above.
 
+Writing `endl` has the effect of ending the current line and flushing the buffer
+associated with that device.
+
 ```C++
 unsigned u1 = 42, u2 = 10;
 std::cout << u1 - u2 << std::endl; // ok: result is 32
