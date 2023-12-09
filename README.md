@@ -52,6 +52,9 @@ std::cout << u + i << std::endl; // if 32-bit ints, prints 4294967264
 Converting a negative number to unsigned behaves exactly as if we had attempted to assign that negative value to an unsigned object.
 The value “wraps around” as described above.
 
+Writing `endl` has the effect of ending the current line and flushing the buffer
+associated with that device.
+
 ```C++
 unsigned u1 = 42, u2 = 10;
 std::cout << u1 - u2 << std::endl; // ok: result is 32
@@ -339,8 +342,7 @@ const variables are defined as local to the file. When we define a const with th
 name in multiple files, it is as if we had written definitions for separate variables
 in each file.
 
-Because we can’t change the value of a const object after we create it, it must be
-initialized.
+A const object after must be initialized in its definition.
 
 ```C++
 const int bufSize = 512; // input buffer size
@@ -396,6 +398,146 @@ double *ptr = &pi; // error: ptr is a plain pointer
 const double *cptr = &pi; // ok: cptr may point to a double that is const
 *cptr = 42; // error: cannot assign to *cptr
 ```
+
+const Pointers:
+
+The fact that a pointer is itself const says nothing about whether we can use
+the pointer to change the underlying object.
+
+```C++
+int errNum = 0;
+int *const curErr = &errNum;  // curErr will always point to errNumb
+
+const double pi = 3.14;
+const double *const pip = &pi;  // pip is a const pointer to a const object
+```
+
+Top-level const:
+
+```C++
+int i = 0;
+int *const p1 = &i; // we can’t change the value of p1 ; const is top-level
+const int ci = 42; // we cannot change ci ; const is top-level
+const int *p2 = &ci; // we can change p2 ; const is low-level
+const int *const p3 = p2; // right-most const is top-level, left-most is not
+const int &r = ci; // const in reference types is always low-level
+```
+When we copy an object, top-level const is ignored.
+Low-level const is never ignored.
+
+### section 2.4.4 constexpr and Constant Expressions
+
+A constant expression is an expression whose value cannot change and that can
+be evaluated at compile time. 
+
+```C++
+const int max_files = 20; // max_files is a constant expression
+const int limit = max_files + 1; // limit is a constant expression
+int staff_size = 27; // staff_size is not a constant expression
+const int sz = get_size(); // sz is not a constant expression
+```
+
+Under the new standard, we can ask the compiler to verify that a variable is a
+constant expression by declaring the variable in a constexpr declaration.
+
+```C++
+constexpr int mf = 20;  // 20 is a constant expression
+constexpr int limit = mf + 1;  // mf + 1 is a constant expression
+constexpr int sz = size();  // ok only if size is a constexpr function
+```
+
+The types we can use in a constexpr are known as “literal types” because they are simple enough to have literal values.
+the arithmetic, reference, and pointer types are literal types.
+
+when we define a pointer in a constexpr declaration, the constexpr specifier applies to the pointer, not the type to which the pointer points:
+
+```C++
+const int *p = nullptr;  // p is a pointer to a const int
+constexpr int *q = nullptr;  // q is a const pointer to int
+```
+
+
+### 2.5.1 Type Aliases
+
+```C++
+typedef double wages; // wages is a synonym for double
+typedef wages base, *p; // base is a synonym for double, p for double*
+```
+
+alias declaration:
+
+```C++
+using SI = Sales_item;  // SI is a synonym for Sales_item
+```
+
+the following declarations use the type `pstring`, which is an alias for the type `char*`
+```C++
+typedef char *pstring;
+const pstring cstr = 0; // cstr is a constant pointer to char
+const pstring *ps; // ps is a pointer to a constant pointer to char
+```
+
+When we rewrite the declaration using `char*`, the base type is `char` and the `*` is part of the declarator. In this case,
+`const char` is the base type.
+
+```C++
+const char *cstr = 0;  // wrong interpretation of const pstring cstr, this is a pointer to const char.
+```
+
+### 2.5.2 The `auto` type specifier
+
+`auto` ignores top-level `const` and keeps low-level `const`:
+```C++
+const int ci = i, &cr = ci;
+auto b = ci; // b is an int (top-level const in ci is dropped)
+auto c = cr; // c is an int ( cr is an alias for ci whose const is top-level)
+auto d = &i; // d is an int* ( & of an int object is int* )
+auto e = &ci; // e is const int* ( & of a const object is low-level const )
+
+const auto f = ci;  // deduced type of ci is int ; f has type const int
+
+auto &g = ci;  // g is a const int& that is bound to ci
+auto &h = 42;  // error: we can’t bind a plain reference to a literal
+const auto &j = 42; // ok: we can bind a const reference to a literal
+
+auto k = ci, &l = i; // k is int ; l is int&
+auto &m = ci, *p = &ci; // m is a const int& ; p is a pointer to const int
+// error: type deduced from i is int ; type deduced from &ci is const int
+auto &n = i, *p2 = &ci;
+```
+
+### 2.5.3 The `decltype` Type specifier
+
+The compiler gives `sum` the same type as the type that would be returned if we were to call `f`.
+
+```C++
+decltype(f()) sum = x;  // sum has whatever type f returns
+
+const int ci = 0, &cj = ci;
+decltype(ci) x = 0; // x has type const int
+decltype(cj) y = x; // y has type const int& and is bound to x
+decltype(cj) z;  // error: z is a reference and must be initialized
+
+
+// decltype of an expression can be a reference type
+int i = 42, *p = &i, &r = i;
+decltype(r + 0) b; // ok: addition yields an int ; b is an (uninitialized) int
+decltype(*p) c;  // error: c is int& and must be initialized (---why? isn't *p is int?)
+```
+
+when we dereference a pointer, we get the object to which the pointer points. Moreover, we can assign to
+that object. Thus, the type deduced by decltype(*p) is int&, not plain int.
+
+```C++
+// decltype of a parenthesized variable is always a reference
+decltype((i)) d;  // error: d is int& and must be initialized
+decltype(i) e;  // ok: e is an (uninitialized) int
+```
+
+
+
+
+
 
 
 
